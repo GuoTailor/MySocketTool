@@ -3,11 +3,11 @@ package com.example.demo.view
 import javafx.collections.FXCollections
 import javafx.scene.control.TabPane
 import javafx.geometry.Orientation.*
+import javafx.scene.Scene
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import jdk.nashorn.internal.objects.Global.Infinity
 import tornadofx.*
-import tornadofx.Stylesheet.Companion.tab
 
 class MainView : View("Hello TornadoFX") {
     override val root = VBox()
@@ -80,14 +80,16 @@ class MainView : View("Hello TornadoFX") {
                     }
                 }
                 val ttt = tabpane {
-                    tab("Screen 1") {
+                    tab("Screen-1") {
                         vbox {
                             button("Button 1")
                             button("Button 2")
                         }
                     }
+                    //maxWidth = -Infinity
+                    useMaxWidth = true
                 }
-                ttt.tab("Screen 2") {
+                ttt.tab("Screen-2") {
                     form {
                         fieldset("Feedback Form", labelPosition = VERTICAL) {
                             field("Comment", VERTICAL) {
@@ -106,6 +108,8 @@ class MainView : View("Hello TornadoFX") {
                         }
                     }
                 }
+                prefWidth = 1200.0
+                useMaxWidth = true
             }
             tabpane {
                 tab("Screen 1") {
