@@ -110,6 +110,7 @@ class MainView : View("Hello TornadoFX") {
                 }
                 prefWidth = 1200.0
                 useMaxWidth = true
+                hgrow = Priority.ALWAYS
             }
             tabpane {
                 tab("Screen 1") {
