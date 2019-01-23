@@ -86,12 +86,16 @@ class MainView : View("Hello TornadoFX") {
                             button("Button 2")
                         }
                     }
-                    //maxWidth = -Infinity
-                    useMaxWidth = true
+                    hgrow = Priority.ALWAYS
                 }
                 ttt.tab("Screen-2") {
                     form {
                         fieldset("Feedback Form", labelPosition = VERTICAL) {
+                            button("Send") {
+                                action {
+                                    ttt.tab("nmka")
+                                }
+                            }
                             field("Comment", VERTICAL) {
                                 textarea {
                                     prefRowCount = 5
@@ -108,9 +112,7 @@ class MainView : View("Hello TornadoFX") {
                         }
                     }
                 }
-                prefWidth = 1200.0
-                useMaxWidth = true
-                hgrow = Priority.ALWAYS
+                prefWidth = 800.0
             }
             tabpane {
                 tab("Screen 1") {
