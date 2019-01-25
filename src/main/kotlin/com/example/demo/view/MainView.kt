@@ -6,6 +6,7 @@ import javafx.concurrent.Worker
 import javafx.scene.control.TabPane
 import javafx.geometry.Orientation.*
 import javafx.scene.Scene
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
@@ -15,6 +16,7 @@ import java.io.File
 
 class MainView : View("Hello TornadoFX") {
     override val root = VBox()
+
     init {
         with(root) {
             menubar {
@@ -62,68 +64,76 @@ class MainView : View("Hello TornadoFX") {
                     Person("3", "Stuart Gills"),
                     Person("3", "Nicole Williams")
             )
-            val hhh = hbox {
-                drawer {
-                    item("Links") {
-                        listview(links) {
-                            cellFormat { link ->
-                                graphic = hyperlink(link.name) {
-                                    setOnAction {
-                                        hostServices.showDocument(link.uri)
+            //anchorpane{
+            anchorpane {
+                vgrow = Priority.ALWAYS
+                splitpane {
+                    //anchorpane {
+                        drawer {
+                            item("Links") {
+                                listview(links) {
+                                    cellFormat { link ->
+                                        graphic = hyperlink(link.name) {
+                                            setOnAction {
+                                                hostServices.showDocument(link.uri)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            item("People") {
+                                tableview(people) {
+                                    column("Name", Person::nameProperty)
+                                    column("Nick", Person::nickProperty)
+                                    columnResizePolicy = SmartResize.POLICY
+                                }
+                            }
+                        }
+                    //}
+                    //anchorpane {
+                        vgrow = Priority.ALWAYS
+                        var webebgine: WebView? = null
+                        val ttt = tabpane {
+                            tab("Screen-1") {
+                                vbox {
+                                    button("Button 1")
+                                    button("Button 2") {
+                                        action {
+                                            val obj = webebgine?.engine?.executeScript("test()")
+                                            println(obj)
+                                        }
+                                    }
+                                    webebgine = webview {
+                                        prefHeight = 400.0
+                                        val url = MainView::class.java.getResource("/index.html").toExternalForm()
+                                        println(url)
+                                        engine.load(url)
+                                    }
+                                }
+                            }
+                            hgrow = Priority.ALWAYS
+                        }
+                        ttt.tab("Screen-2") {
+                            form {
+                                fieldset("Feedback Form", labelPosition = VERTICAL) {
+                                    field("Comment", VERTICAL) {
+                                        textarea {
+                                            prefRowCount = 5
+                                            vgrow = Priority.ALWAYS
+                                        }
+                                    }
+                                    buttonbar {
+                                        button("Send") {
+                                            action {
+                                                ttt.tab("nmka")
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    item("People") {
-                        tableview(people) {
-                            column("Name", Person::nameProperty)
-                            column("Nick", Person::nickProperty)
-                            columnResizePolicy = SmartResize.POLICY
-                        }
-                    }
+                    //}
                 }
-                var webebgine: WebView? = null
-                val ttt = tabpane {
-                    tab("Screen-1") {
-                        vbox {
-                            button("Button 1")
-                            button("Button 2"){
-                                action {
-                                    val obj = webebgine?.engine?.executeScript("test()")
-                                    println(obj)
-                                }
-                            }
-                            webebgine = webview{
-                                prefHeight = 400.0
-                                val url = MainView::class.java.getResource("/index.html").toExternalForm()
-                                println(url)
-                                engine.load(url)
-                            }
-                        }
-                    }
-                    hgrow = Priority.ALWAYS
-                }
-                ttt.tab("Screen-2") {
-                    form {
-                        fieldset("Feedback Form", labelPosition = VERTICAL) {
-                            field("Comment", VERTICAL) {
-                                textarea {
-                                    prefRowCount = 5
-                                    vgrow = Priority.ALWAYS
-                                }
-                            }
-                            buttonbar {
-                                button("Send") {
-                                    action {
-                                        ttt.tab("nmka")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                prefWidth = 800.0
             }
             tabpane {
                 tab("Screen 1") {
@@ -148,6 +158,7 @@ class MainView : View("Hello TornadoFX") {
                     }
                 }
             }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
+
         }
     }
 }
