@@ -1,13 +1,17 @@
 package com.example.demo.view
 
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
+import javafx.concurrent.Worker
 import javafx.scene.control.TabPane
 import javafx.geometry.Orientation.*
 import javafx.scene.Scene
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import jdk.nashorn.internal.objects.Global.Infinity
+import javafx.scene.web.WebView
+import netscape.javascript.JSObject
 import tornadofx.*
+import java.io.File
 
 class MainView : View("Hello TornadoFX") {
     override val root = VBox()
@@ -79,11 +83,23 @@ class MainView : View("Hello TornadoFX") {
                         }
                     }
                 }
+                var webebgine: WebView? = null
                 val ttt = tabpane {
                     tab("Screen-1") {
                         vbox {
                             button("Button 1")
-                            button("Button 2")
+                            button("Button 2"){
+                                action {
+                                    val obj = webebgine?.engine?.executeScript("test()")
+                                    println(obj)
+                                }
+                            }
+                            webebgine = webview{
+                                prefHeight = 400.0
+                                val url = MainView::class.java.getResource("/index.html").toExternalForm()
+                                println(url)
+                                engine.load(url)
+                            }
                         }
                     }
                     hgrow = Priority.ALWAYS
@@ -91,11 +107,6 @@ class MainView : View("Hello TornadoFX") {
                 ttt.tab("Screen-2") {
                     form {
                         fieldset("Feedback Form", labelPosition = VERTICAL) {
-                            button("Send") {
-                                action {
-                                    ttt.tab("nmka")
-                                }
-                            }
                             field("Comment", VERTICAL) {
                                 textarea {
                                     prefRowCount = 5
