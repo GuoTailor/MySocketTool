@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #editor {
+            position: relative;
+            width: auto;
+            height: 400px;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+<div id="editor">{"nmka":12}</div>
+<button onclick="test()">nmkla</button>
+<script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/theme-eclipse.js" type="text/javascript" charset="utf-8"></script>
+<script src="src/mode-json.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/eclipse");
+    var JavaScriptMode = ace.require("ace/mode/json").Mode;
+    editor.session.setMode(new JavaScriptMode());
+
+
+    function test() {
+        console.log(editor.getValue());
+        return editor.getValue();
+    }
+</script>
+</body>
+</html>
