@@ -1,5 +1,6 @@
 package com.example.demo.view
 
+import com.example.demo.app.tabs
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.concurrent.Worker
@@ -16,6 +17,8 @@ import java.io.File
 
 class MainView : View("Hello TornadoFX") {
     override val root = VBox()
+    var tabPane: TabPane? = null
+    var tabid = 2
 
     init {
         with(root) {
@@ -38,16 +41,19 @@ class MainView : View("Hello TornadoFX") {
                         println("Copying!")
                     }
                     item("Paste", "Shortcut+V").action {
-                        println("Pasting!")
+                        println("Pasting!${"3".compareTo("2")}")
+                    }
+                }
+                menu("New") {
+                    item("新的tab", "Shortcut+N").action {
+                        tabPane?.tabs("new", "${tabid++}")
                     }
                 }
             }
             class Link(val name: String, val uri: String)
             class Person(name: String, nick: String) {
                 var name by property<String>()
-                fun nameProperty() = getProperty(Person::name)
                 var nick by property<String>()
-                fun nickProperty() = getProperty(Person::nick)
 
                 init {
                     this.name = name
@@ -64,74 +70,75 @@ class MainView : View("Hello TornadoFX") {
                     Person("3", "Stuart Gills"),
                     Person("3", "Nicole Williams")
             )
-            //anchorpane{
             anchorpane {
                 vgrow = Priority.ALWAYS
                 splitpane {
                     //anchorpane {
-                        drawer {
-                            item("Links") {
-                                listview(links) {
-                                    cellFormat { link ->
-                                        graphic = hyperlink(link.name) {
-                                            setOnAction {
-                                                hostServices.showDocument(link.uri)
-                                            }
+                    drawer {
+                        item("Links") {
+                            listview(links) {
+                                cellFormat { link ->
+                                    graphic = hyperlink(link.name) {
+                                        setOnAction {
+                                            hostServices.showDocument(link.uri)
                                         }
                                     }
                                 }
                             }
-                            item("People") {
-                                tableview(people) {
-                                    column("Name", Person::nameProperty)
-                                    column("Nick", Person::nickProperty)
-                                    columnResizePolicy = SmartResize.POLICY
-                                }
+                        }
+                        item("People") {
+                            tableview(people) {
+                                column("Name", Person::name)
+                                column("Nick", Person::nick)
+                                columnResizePolicy = SmartResize.POLICY
                             }
                         }
+                    }
                     //}
                     //anchorpane {
-                        vgrow = Priority.ALWAYS
-                        var webebgine: WebView? = null
-                        val ttt = tabpane {
-                            tab("Screen-1") {
-                                vbox {
-                                    button("Button 1")
-                                    button("Button 2") {
+                    vgrow = Priority.ALWAYS
+                    var webebgine: WebView? = null
+                    tabPane = tabpane {
+                        tab("Screen-1") {
+                            id = "3"
+                            vbox {
+                                button("Button 1")
+                                button("Button 2") {
+                                    action {
+                                        val obj = webebgine?.engine?.executeScript("test()")
+                                        println(obj)
+                                    }
+                                }
+                                webebgine = webview {
+                                    prefHeight = 400.px.value
+                                    val url = MainView::class.java.getResource("/index.html").toExternalForm()
+                                    println(url)
+                                    engine.load(url)
+                                }
+                            }
+                        }
+                        hgrow = Priority.ALWAYS
+                    }
+                    tabPane?.tab("Screen-2") {
+                        id = "1"
+                        form {
+                            fieldset("Feedback Form", labelPosition = VERTICAL) {
+                                field("Comment", VERTICAL) {
+                                    textarea {
+                                        prefRowCount = 5
+                                        vgrow = Priority.ALWAYS
+                                    }
+                                }
+                                buttonbar {
+                                    button("Send") {
                                         action {
-                                            val obj = webebgine?.engine?.executeScript("test()")
-                                            println(obj)
-                                        }
-                                    }
-                                    webebgine = webview {
-                                        prefHeight = 400.0
-                                        val url = MainView::class.java.getResource("/index.html").toExternalForm()
-                                        println(url)
-                                        engine.load(url)
-                                    }
-                                }
-                            }
-                            hgrow = Priority.ALWAYS
-                        }
-                        ttt.tab("Screen-2") {
-                            form {
-                                fieldset("Feedback Form", labelPosition = VERTICAL) {
-                                    field("Comment", VERTICAL) {
-                                        textarea {
-                                            prefRowCount = 5
-                                            vgrow = Priority.ALWAYS
-                                        }
-                                    }
-                                    buttonbar {
-                                        button("Send") {
-                                            action {
-                                                ttt.tab("nmka")
-                                            }
+                                            tabPane?.tab("nmka")
                                         }
                                     }
                                 }
                             }
                         }
+                    }
                     //}
                 }
             }
