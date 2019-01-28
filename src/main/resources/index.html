@@ -16,14 +16,14 @@
 <div id="editor">{
     "code":12
 }</div>
-<!--<button onclick="test1(nmka)">nmka2</button>-->
+<button onclick="test1(nmka)">nmka2</button>
 <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/theme-eclipse.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/mode-json.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/ext-searchbox.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    var nmka = "\"code: 5\"";
+    var nmka = "\"code\": 5";
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/eclipse");
     var JavaScriptMode = ace.require("ace/mode/json").Mode;
@@ -36,12 +36,8 @@
     }
 
     function test1(text) {
-        console.log(">>>" + text);
-        //ace.search.needle = /["]code":\\W*\\d+/;
-        var se = new Search();
-        se.needle = /["]code":\\W*\\d+/;
-        var nmk = editor.replace(text, se);
-        console.log(nmk);
+        editor.find("[\"]code\":\\W*\\d+", {regExp: true});
+        editor.replace(text);
     }
 </script>
 </body>

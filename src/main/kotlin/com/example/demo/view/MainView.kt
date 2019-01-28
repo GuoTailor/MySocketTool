@@ -99,6 +99,7 @@ class MainView : View("Hello TornadoFX") {
                     vgrow = Priority.ALWAYS
                     var webebgine: WebView? = null
                     tabPane = tabpane {
+                        tabs("new", "${tabid++}")
                         tab("Screen-1") {
                             id = "3"
                             vbox {
