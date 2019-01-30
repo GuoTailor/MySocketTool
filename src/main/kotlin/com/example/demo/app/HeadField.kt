@@ -6,7 +6,7 @@ import java.lang.IllegalStateException
 /**
  * Created by gyh on 2019/1/28.
  */
-class HeadField {
+class HeadField(chosen: Boolean = false, content: String, type: String) {
     var chosen: Boolean by property()
     var content: String by property()
     var type: String by property()
@@ -24,9 +24,11 @@ class HeadField {
         }.collect({ArrayList()}, { sb, s -> sb.addAll(s)}, { sb, sb2 -> sb.addAll(sb2)})
     }
 
+    init {
+        this.chosen = chosen
+        this.content = content
+        this.type = type
+    }
+
 }
 
-fun main() {
-    val i = 0x01_02_03_04
-    println(i.ushr(8).toByte())
-}

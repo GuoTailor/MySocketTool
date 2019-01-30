@@ -4,8 +4,11 @@ import com.example.demo.view.MainView
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
+import javafx.scene.control.CheckBox
+import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
+import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.layout.GridPane.setConstraints
 import tornadofx.*
 import javafx.scene.control.cell.TextFieldTableCell
@@ -20,8 +23,9 @@ import kotlin.reflect.KClass
 fun TabPane.tabs(text: String? = null, id: String? = null) {
     val request = Request()
     var web: WebView? = null
-    request.heads.add(Head(true, "02", Byte::class))
-    tab(text + id) {
+    request.heads.add(HeadField(true, "02", "byte"))
+    var t: Tab? = null
+    t = tab(text + id) {
         this.id = id
         vbox {
             gridpane {
@@ -55,9 +59,10 @@ fun TabPane.tabs(text: String? = null, id: String? = null) {
                 button("连接") {
                     setConstraints(this, 6, 0)
                     action {
-                        /*request.ip = ip.text
+                        request.ip = ip.text
                         request.port = port.text.toInt()
-                        request.code = code.text.toInt()*/
+                        request.code = code.text.toInt()
+                        t?.text = code.text
                         request.heads.forEach{
                             println(it.content)
                         }
@@ -68,36 +73,29 @@ fun TabPane.tabs(text: String? = null, id: String? = null) {
                 tab(" head ") {
                     tableview(request.heads) {
                         isEditable = true
-                        column("选中", Head<*>::chosen)
-                        column("内容", Head<*>::content){
-                            onEditCommit = EventHandler { t: TableColumn.CellEditEvent<Head<*>, String> ->
+                        val nmka = TableColumn<HeadField, CheckBox>("选中")
+                        //nmka.setCellFactory(CheckBoxTableCell.forTableColumn(nmka))
+                        this.columns.add(nmka)
+                        //checkbox("选中")
+                        column("选中", HeadField::chosen)
+                        column("内容", HeadField::content){
+                            onEditCommit = EventHandler { t: TableColumn.CellEditEvent<HeadField, String> ->
                                 val size = t.tableView.items.size
                                 println("$size ${t.tablePosition.row}")
                                 if (size - 1 == t.tablePosition.row) {
-                                    request.heads.add(Head(true, "", Byte::class))
+                                    request.heads.add(HeadField(true, "00", "byte"))
                                 }
-                                (t.tableView.items[t.tablePosition.row] as Head<*>).content = t.newValue
+                                (t.tableView.items[t.tablePosition.row] as HeadField).content = t.newValue
                             }
-                        }.cellFactory = TextFieldTableCell.forTableColumn<Head<*>>()
-                        column("类型", Head<*>::type){
-                            cellFactory = TextFieldTableCell.forTableColumn<Head<*>, KClass<out Number>>(object : StringConverter<KClass<out Number>>(){
-                                override fun toString(objec: KClass<out Number>): String {
-                                    return objec.simpleName.toString()
-                                }
-                                override fun fromString(string: String): KClass<out Number> {
-                                    return when(string) {
-                                        "byte" -> Byte::class
-                                        else -> Number::class
-                                    }
-                                }
-                            })
-                            onEditCommit = EventHandler { t: TableColumn.CellEditEvent<Head<*>, KClass<out Number>> ->
+                        }.cellFactory = TextFieldTableCell.forTableColumn<HeadField>()
+                        column("类型", HeadField::type){
+                            onEditCommit = EventHandler { t: TableColumn.CellEditEvent<HeadField, String> ->
                                 val size = t.tableView.items.size
                                 println("$size ${t.tablePosition.row}")
                                 if (size - 1 == t.tablePosition.row) {
-                                    request.heads.add(Head(true, "", Byte::class))
+                                    request.heads.add(HeadField(true, "00", "byte"))
                                 }
-                                //(t.tableView.items[t.tablePosition.row] as Head<*>).type =
+                                (t.tableView.items[t.tablePosition.row] as HeadField).type = t.newValue
                             }
                         }
                     }.isEditable = true
