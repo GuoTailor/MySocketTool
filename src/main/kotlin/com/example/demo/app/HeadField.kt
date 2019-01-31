@@ -1,5 +1,6 @@
 package com.example.demo.app
 
+import javafx.scene.control.CheckBox
 import tornadofx.*
 import java.lang.IllegalStateException
 
@@ -7,7 +8,7 @@ import java.lang.IllegalStateException
  * Created by gyh on 2019/1/28.
  */
 class HeadField(chosen: Boolean = false, content: String, type: String) {
-    var chosen: Boolean by property()
+    var chosen: CheckBox by property()
     var content: String by property()
     var type: String by property()
 
@@ -25,7 +26,8 @@ class HeadField(chosen: Boolean = false, content: String, type: String) {
     }
 
     init {
-        this.chosen = chosen
+        this.chosen = CheckBox()
+        this.chosen.isSelected = chosen
         this.content = content
         this.type = type
     }

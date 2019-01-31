@@ -4,6 +4,7 @@ import com.example.demo.app.tabs
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.concurrent.Worker
+import javafx.geometry.Orientation
 import javafx.scene.control.TabPane
 import javafx.geometry.Orientation.*
 import javafx.scene.Scene
@@ -71,102 +72,105 @@ class MainView : View("Hello TornadoFX") {
                     Person("3", "Nicole Williams")
             )
             anchorpane {
-                vgrow = Priority.ALWAYS
-                splitpane {
-                    //anchorpane {
-                    drawer {
-                        item("Links") {
-                            listview(links) {
-                                cellFormat { link ->
-                                    graphic = hyperlink(link.name) {
-                                        setOnAction {
-                                            hostServices.showDocument(link.uri)
+                splitpane (Orientation.VERTICAL){
+                    anchorpane {
+                        vgrow = Priority.ALWAYS
+                        splitpane {
+                            //anchorpane {
+                            drawer {
+                                item("Links") {
+                                    listview(links) {
+                                        cellFormat { link ->
+                                            graphic = hyperlink(link.name) {
+                                                setOnAction {
+                                                    hostServices.showDocument(link.uri)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                item("People") {
+                                    tableview(people) {
+                                        column("Name", Person::name)
+                                        column("Nick", Person::nick)
+                                        columnResizePolicy = SmartResize.POLICY
+                                    }
+                                }
+                            }
+                            //}
+                            //anchorpane {
+                            vgrow = Priority.ALWAYS
+                            var webebgine: WebView? = null
+                            tabPane = tabpane {
+                                tabs("new", "${tabid++}")
+                                tab("Screen-1") {
+                                    id = "3"
+                                    vbox {
+                                        button("Button 1")
+                                        button("Button 2") {
+                                            action {
+                                                val obj = webebgine?.engine?.executeScript("test()")
+                                                println(obj)
+                                            }
+                                        }
+                                        webebgine = webview {
+                                            prefHeight = 400.px.value
+                                            val url = MainView::class.java.getResource("/index.html").toExternalForm()
+                                            println(url)
+                                            engine.load(url)
+                                        }
+                                    }
+                                }
+                                hgrow = Priority.ALWAYS
+                            }
+                            tabPane?.tab("Screen-2") {
+                                id = "1"
+                                form {
+                                    fieldset("Feedback Form", labelPosition = VERTICAL) {
+                                        field("Comment", VERTICAL) {
+                                            textarea {
+                                                prefRowCount = 5
+                                                vgrow = Priority.ALWAYS
+                                            }
+                                        }
+                                        buttonbar {
+                                            button("Send") {
+                                                action {
+                                                    tabPane?.tab("nmka")
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        item("People") {
-                            tableview(people) {
-                                column("Name", Person::name)
-                                column("Nick", Person::nick)
-                                columnResizePolicy = SmartResize.POLICY
-                            }
+                            //}
                         }
                     }
-                    //}
-                    //anchorpane {
-                    vgrow = Priority.ALWAYS
-                    var webebgine: WebView? = null
-                    tabPane = tabpane {
-                        tabs("new", "${tabid++}")
-                        tab("Screen-1") {
-                            id = "3"
+                    tabpane {
+                        tab("Screen 1") {
                             vbox {
                                 button("Button 1")
-                                button("Button 2") {
-                                    action {
-                                        val obj = webebgine?.engine?.executeScript("test()")
-                                        println(obj)
-                                    }
-                                }
-                                webebgine = webview {
-                                    prefHeight = 400.px.value
-                                    val url = MainView::class.java.getResource("/index.html").toExternalForm()
-                                    println(url)
-                                    engine.load(url)
-                                }
+                                button("Button 2")
                             }
                         }
-                        hgrow = Priority.ALWAYS
-                    }
-                    tabPane?.tab("Screen-2") {
-                        id = "1"
-                        form {
-                            fieldset("Feedback Form", labelPosition = VERTICAL) {
-                                field("Comment", VERTICAL) {
-                                    textarea {
-                                        prefRowCount = 5
-                                        vgrow = Priority.ALWAYS
-                                    }
-                                }
-                                buttonbar {
-                                    button("Send") {
-                                        action {
-                                            tabPane?.tab("nmka")
+                        tab("Screen 2") {
+                            form {
+                                fieldset("Feedback Form", labelPosition = VERTICAL) {
+                                    field("Comment", VERTICAL) {
+                                        textarea {
+                                            prefRowCount = 5
+                                            vgrow = Priority.ALWAYS
                                         }
                                     }
+                                    buttonbar {
+                                        button("Send")
+                                    }
                                 }
                             }
                         }
-                    }
-                    //}
+                    }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
                 }
             }
-            tabpane {
-                tab("Screen 1") {
-                    vbox {
-                        button("Button 1")
-                        button("Button 2")
-                    }
-                }
-                tab("Screen 2") {
-                    form {
-                        fieldset("Feedback Form", labelPosition = VERTICAL) {
-                            field("Comment", VERTICAL) {
-                                textarea {
-                                    prefRowCount = 5
-                                    vgrow = Priority.ALWAYS
-                                }
-                            }
-                            buttonbar {
-                                button("Send")
-                            }
-                        }
-                    }
-                }
-            }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
-
         }
     }
 }

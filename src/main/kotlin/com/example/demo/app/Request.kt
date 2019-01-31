@@ -1,5 +1,6 @@
 package com.example.demo.app
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
@@ -14,7 +15,6 @@ class Request(ip:String = "127.0.0.1", port:Int = 8282, code: Int = 1) {
     var ip: String by property()
     var port: Int by property()
     var code: Int by property()
-
     val heads: ObservableList<HeadField> = FXCollections.observableArrayList()
     init {
         this.ip = ip

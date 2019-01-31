@@ -1,6 +1,7 @@
 package com.example.demo.app
 
 import com.example.demo.view.MainView
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
@@ -9,6 +10,7 @@ import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
 import javafx.scene.control.cell.CheckBoxTableCell
+import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.GridPane.setConstraints
 import tornadofx.*
 import javafx.scene.control.cell.TextFieldTableCell
@@ -65,7 +67,10 @@ fun TabPane.tabs(text: String? = null, id: String? = null) {
                         t?.text = code.text
                         request.heads.forEach{
                             println(it.content)
+                            println(it.chosen.isSelected)
                         }
+                        val mapper = jacksonObjectMapper()
+                        println(mapper.writeValueAsString(request))
                     }
                 }
             }
@@ -73,11 +78,9 @@ fun TabPane.tabs(text: String? = null, id: String? = null) {
                 tab(" head ") {
                     tableview(request.heads) {
                         isEditable = true
-                        val nmka = TableColumn<HeadField, CheckBox>("选中")
-                        //nmka.setCellFactory(CheckBoxTableCell.forTableColumn(nmka))
-                        this.columns.add(nmka)
-                        //checkbox("选中")
-                        column("选中", HeadField::chosen)
+                        column("选中", HeadField::chosen){
+                            cellValueFactory = PropertyValueFactory("chosen")
+                        }
                         column("内容", HeadField::content){
                             onEditCommit = EventHandler { t: TableColumn.CellEditEvent<HeadField, String> ->
                                 val size = t.tableView.items.size
@@ -97,7 +100,7 @@ fun TabPane.tabs(text: String? = null, id: String? = null) {
                                 }
                                 (t.tableView.items[t.tablePosition.row] as HeadField).type = t.newValue
                             }
-                        }
+                        }.cellFactory = TextFieldTableCell.forTableColumn<HeadField>()
                     }.isEditable = true
                 }
                 tab(" body ") {
