@@ -1,25 +1,20 @@
 package com.example.demo.view
 
 import com.example.demo.app.tabs
-import javafx.beans.value.ObservableValue
+import com.example.demo.common.readRequestByFile
 import javafx.collections.FXCollections
-import javafx.concurrent.Worker
 import javafx.geometry.Orientation
+import javafx.geometry.Orientation.VERTICAL
 import javafx.scene.control.TabPane
-import javafx.geometry.Orientation.*
-import javafx.scene.Scene
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
-import netscape.javascript.JSObject
 import tornadofx.*
 import java.io.File
 
 class MainView : View("Hello TornadoFX") {
     override val root = VBox()
     var tabPane: TabPane? = null
-    var tabid = 2
 
     init {
         with(root) {
@@ -47,7 +42,7 @@ class MainView : View("Hello TornadoFX") {
                 }
                 menu("New") {
                     item("新的tab", "Shortcut+N").action {
-                        tabPane?.tabs("new", "${tabid++}")
+                        tabPane?.tabs("new")
                     }
                 }
             }
@@ -100,48 +95,9 @@ class MainView : View("Hello TornadoFX") {
                             //}
                             //anchorpane {
                             vgrow = Priority.ALWAYS
-                            var webebgine: WebView? = null
                             tabPane = tabpane {
-                                tabs("new", "${tabid++}")
-                                tab("Screen-1") {
-                                    id = "3"
-                                    vbox {
-                                        button("Button 1")
-                                        button("Button 2") {
-                                            action {
-                                                val obj = webebgine?.engine?.executeScript("test()")
-                                                println(obj)
-                                            }
-                                        }
-                                        webebgine = webview {
-                                            prefHeight = 400.px.value
-                                            val url = MainView::class.java.getResource("/index.html").toExternalForm()
-                                            println(url)
-                                            engine.load(url)
-                                        }
-                                    }
-                                }
+                                tabs("new")
                                 hgrow = Priority.ALWAYS
-                            }
-                            tabPane?.tab("Screen-2") {
-                                id = "1"
-                                form {
-                                    fieldset("Feedback Form", labelPosition = VERTICAL) {
-                                        field("Comment", VERTICAL) {
-                                            textarea {
-                                                prefRowCount = 5
-                                                vgrow = Priority.ALWAYS
-                                            }
-                                        }
-                                        buttonbar {
-                                            button("Send") {
-                                                action {
-                                                    tabPane?.tab("nmka")
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
                             }
                             //}
                         }
@@ -171,6 +127,11 @@ class MainView : View("Hello TornadoFX") {
                     }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
                 }
             }
+        }
+
+        val file = File("./src/main/resources/tabs/")
+        file.listFiles().forEach {
+            tabPane?.tabs(pathFile = it)
         }
     }
 }
