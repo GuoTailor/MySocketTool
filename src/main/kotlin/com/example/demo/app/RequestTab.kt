@@ -6,6 +6,7 @@ import com.example.demo.view.MainView
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
+import javafx.scene.Node
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
@@ -13,8 +14,13 @@ import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.GridPane.setConstraints
 import tornadofx.*
 import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.paint.Color
 import javafx.scene.web.WebView
 import java.io.File
+import javafx.scene.control.ToolBar
+import java.util.HashMap
+
+
 
 
 /**
@@ -127,6 +133,26 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                     }
                 }
             }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
+            val t = text("jdfksdf") {
+                prefHeight(200.px.value)
+                x = 10.0
+
+            }
+            t.text = "nmkannn你们"
+            t.fill = Color.RED
+            val html = htmleditor {
+                prefHeight = 200.px.value
+            }
+            val map = HashMap<Int, Node>()
+            for (candidate in html.lookupAll("ToolBar")) {
+                val list = (candidate as ToolBar).items
+                for (i in list.indices) {
+                    val b = list[i] as Node
+                    map[map.size + 1] = b
+                }
+            }
+            //map.remove(18) // Removes font-menu-button
+            //map.remove(25) // Removes editor-strike button
         }
     }
 

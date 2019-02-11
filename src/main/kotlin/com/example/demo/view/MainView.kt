@@ -130,7 +130,7 @@ class MainView : View("Hello TornadoFX") {
         }
 
         val file = File("./src/main/resources/tabs/")
-        file.listFiles().forEach {
+        file.listFiles()?.forEach {
             tabPane?.tabs(pathFile = it)
         }
     }
