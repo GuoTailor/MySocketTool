@@ -67,64 +67,37 @@ class MainView : View("Hello TornadoFX") {
                     Person("3", "Nicole Williams")
             )
             anchorpane {
-                splitpane (Orientation.VERTICAL){
-                    anchorpane {
-                        vgrow = Priority.ALWAYS
-                        splitpane {
-                            //anchorpane {
-                            drawer {
-                                item("Links") {
-                                    listview(links) {
-                                        cellFormat { link ->
-                                            graphic = hyperlink(link.name) {
-                                                setOnAction {
-                                                    hostServices.showDocument(link.uri)
-                                                }
-                                            }
+                vgrow = Priority.ALWAYS
+                splitpane {
+                    //anchorpane {
+                    drawer {
+                        item("Links") {
+                            listview(links) {
+                                cellFormat { link ->
+                                    graphic = hyperlink(link.name) {
+                                        setOnAction {
+                                            hostServices.showDocument(link.uri)
                                         }
                                     }
                                 }
-                                item("People") {
-                                    tableview(people) {
-                                        column("Name", Person::name)
-                                        column("Nick", Person::nick)
-                                        columnResizePolicy = SmartResize.POLICY
-                                    }
-                                }
                             }
-                            //}
-                            //anchorpane {
-                            vgrow = Priority.ALWAYS
-                            tabPane = tabpane {
-                                tabs("new")
-                                hgrow = Priority.ALWAYS
+                        }
+                        item("People") {
+                            tableview(people) {
+                                column("Name", Person::name)
+                                column("Nick", Person::nick)
+                                columnResizePolicy = SmartResize.POLICY
                             }
-                            //}
                         }
                     }
-                    tabpane {
-                        tab("Screen 1") {
-                            vbox {
-                                button("Button 1")
-                                button("Button 2")
-                            }
-                        }
-                        tab("Screen 2") {
-                            form {
-                                fieldset("Feedback Form", labelPosition = VERTICAL) {
-                                    field("Comment", VERTICAL) {
-                                        textarea {
-                                            prefRowCount = 5
-                                            vgrow = Priority.ALWAYS
-                                        }
-                                    }
-                                    buttonbar {
-                                        button("Send")
-                                    }
-                                }
-                            }
-                        }
-                    }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
+                    //}
+                    //anchorpane {
+                    vgrow = Priority.ALWAYS
+                    tabPane = tabpane {
+                        tabs("new")
+                        hgrow = Priority.ALWAYS
+                    }
+                    //}
                 }
             }
         }

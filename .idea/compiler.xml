@@ -12,9 +12,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="MySocketTool" target="1.5" />
-      <module name="tornadofx-empty-maven-project" target="1.5" />
-      <module name="tornadofx-empty-project" target="1.5" />
+      <module name="MySocketTool" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

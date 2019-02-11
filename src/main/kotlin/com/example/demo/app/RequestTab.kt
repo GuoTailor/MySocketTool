@@ -3,6 +3,7 @@ package com.example.demo.app
 import com.example.demo.common.readRequestByFile
 import com.example.demo.common.saverRequestToFile
 import com.example.demo.view.MainView
+import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
@@ -19,6 +20,9 @@ import javafx.scene.web.WebView
 import java.io.File
 import javafx.scene.control.ToolBar
 import java.util.HashMap
+import sun.reflect.annotation.AnnotationParser.toArray
+
+
 
 
 
@@ -133,26 +137,20 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                     }
                 }
             }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
-            val t = text("jdfksdf") {
-                prefHeight(200.px.value)
-                x = 10.0
-
-            }
-            t.text = "nmkannn你们"
-            t.fill = Color.RED
-            val html = htmleditor {
+            val editor = htmleditor {
                 prefHeight = 200.px.value
             }
-            val map = HashMap<Int, Node>()
-            for (candidate in html.lookupAll("ToolBar")) {
-                val list = (candidate as ToolBar).items
-                for (i in list.indices) {
-                    val b = list[i] as Node
-                    map[map.size + 1] = b
+            editor.isVisible = false
+            Platform.runLater{
+                val nodes = editor.lookupAll(".tool-bar")
+                for (node in nodes) {
+                    node.isVisible = false
+                    node.isManaged = false
                 }
+                editor.isVisible = true
             }
-            //map.remove(18) // Removes font-menu-button
-            //map.remove(25) // Removes editor-strike button
+
+            editor.htmlText = "<html><head></head><body contenteditable=\"true\"><h1>Heading</h1><div><u>Text</u>, some text</div></body></html>"
         }
     }
 
