@@ -14,7 +14,7 @@
 </head>
 <body>
 <div id="editor">{
-    "code":12
+    "msgCode":12
 }</div>
 <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
@@ -34,7 +34,7 @@
     }
 
     function test1(text) {
-        editor.find("\"code\":\\W*\\d*", {regExp: true});
+        editor.find("\"msgCode\":[ ]*\\d*", {regExp: true});
         editor.replace(text);
     }
 </script>

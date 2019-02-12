@@ -1,12 +1,9 @@
 package com.example.demo.app
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
 import java.util.stream.Collectors
-import kotlin.reflect.KClass
-import kotlin.reflect.full.cast
 
 /**
  * Created by gyh on 2019/1/26.
@@ -17,7 +14,7 @@ class Request(ip:String = "127.0.0.1", port:Int = 8282, code: Int = 1, body: Str
     var code: Int by property()
     val heads: ObservableList<HeadField> = FXCollections.observableArrayList()
     var body: String = "{\n" +
-            "    \"code\":12\n" +
+            "    \"msgCode\":12\n" +
             "}"
     init {
         this.body = body
@@ -34,6 +31,10 @@ class Request(ip:String = "127.0.0.1", port:Int = 8282, code: Int = 1, body: Str
                 "body" to body,
                 "heads" to heads.stream().map { it.serialize() }.collect(Collectors.toList())
         )
+    }
+
+    fun getHeads(length: Int): ArrayList<Byte> {
+        return heads.stream().filter { it.chosen.isSelected }.map { it.getContent(length) }.collect({ ArrayList() }, { sb, s -> sb.addAll(s) }, { sb, sb2 -> sb.addAll(sb2) })
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.app
 
+import com.example.demo.common.NettyServer
+import com.example.demo.common.NettyServerHandler
 import com.example.demo.common.readRequestByFile
 import com.example.demo.common.saverRequestToFile
 import com.example.demo.view.MainView
@@ -7,25 +9,17 @@ import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
-import javafx.scene.Node
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableColumn
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.layout.GridPane.setConstraints
-import tornadofx.*
 import javafx.scene.control.cell.TextFieldTableCell
-import javafx.scene.paint.Color
+import javafx.scene.layout.GridPane.setConstraints
+import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
+import tornadofx.*
 import java.io.File
-import javafx.scene.control.ToolBar
-import java.util.HashMap
-import sun.reflect.annotation.AnnotationParser.toArray
-
-
-
-
-
+import java.text.SimpleDateFormat
 
 /**
  * Created by GYH on 2019/1/25.
@@ -40,7 +34,8 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
     }
     val name = "${request.ip}-${request.port}-${request.code}"
     var path = pathFile
-
+    var editor: HTMLEditor? = null
+    var serverHandler: NettyServerHandler? = null
     var web: WebView? = null
     var t: Tab? = null
     t = tab(text ?: name) {
@@ -70,22 +65,28 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                     setConstraints(this, 5, 0)
                     textProperty().addListener { observable: ObservableValue<out String>, oldValue: String, newValue: String ->
                         println(newValue)
-                        web?.engine?.executeScript("test1('\"code\": $newValue')")
+                        web?.engine?.executeScript("test1('\"msgCode\": $newValue')")
                     }
                 }
                 button("连接") {
                     setConstraints(this, 6, 0)
                     action {
-                        request.ip = ip.text
-                        request.port = port.text.toInt()
-                        request.code = code.text.toInt()
-                        t?.text = "${ip.text}-${port.text}-${code.text}"
-                        request.heads.forEach {
-                            println(it.content)
-                            println(it.chosen.isSelected)
-                            println(it.type.value)
+                        println(this.text)
+                        if (this.text == "连接") {
+                            request.ip = ip.text
+                            request.port = port.text.toInt()
+                            request.code = code.text.toInt()
+                            t?.text = "${ip.text}-${port.text}-${code.text}"
+                            request.heads.forEach {
+                                println(it.content)
+                                println(it.chosen.isSelected)
+                                println(it.type.value)
+                            }
+                            web?.engine?.executeScript("test1('\"msgCode\": ${request.code}')")
+                            serverHandler = NettyServer().run(request.ip, request.port)
+                            serverHandler?.editor = editor
+                            serverHandler?.button = this
                         }
-                        web?.engine?.executeScript("test1('\"code\": ${request.code}')")
                     }
                 }
             }
@@ -95,6 +96,7 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                         isEditable = true
                         column("选中", HeadField::chosen) {
                             cellValueFactory = PropertyValueFactory("chosen")
+                            isSortable = false
                         }
                         column("内容", HeadField::content) {
                             onEditCommit = EventHandler { t: TableColumn.CellEditEvent<HeadField, String> ->
@@ -105,13 +107,15 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                                 }
                                 (t.tableView.items[t.tablePosition.row] as HeadField).content = t.newValue
                             }
+                            isSortable = false
                         }.cellFactory = TextFieldTableCell.forTableColumn<HeadField>()
                         column("类型", HeadField::type) {
                             /*val nmka = onEditCancel
                             selectionModel.selectedIndexProperty().addListener { ov, oldv, newv ->
                             }*/
+                            isSortable = false
                         }
-                    }.isEditable = true
+                    }
                 }
                 tab(" body ") {
                     form {
@@ -127,9 +131,13 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                                 button("Send") {
                                     action {
                                         val obj = web?.engine?.executeScript("test()")
+                                        val size = obj.toString().toByteArray().size
                                         println(obj)
                                         request.body = obj as String
                                         path = saverRequestToFile(request, "./src/main/resources/tabs/${t?.text}", path)
+                                        editor?.htmlText = editor?.htmlText + "<a style=\"color:#6d6d6d;font-size:12px;\">${printHexBinary(request.getHeads(0).apply { add((size ushr 8).toByte()); add(size.toByte())  })} >>" +
+                                                " ${SimpleDateFormat("HH:mm:ss SSS").format(System.currentTimeMillis())}</a> <br/> <a style=\"color:#0000ff;font-size:14px;\">$obj</a><p/>"
+                                        serverHandler?.send(obj, request.getHeads(0))
                                     }
                                 }
                             }
@@ -137,21 +145,40 @@ fun TabPane.tabs(text: String? = null, pathFile: File? = null) {
                     }
                 }
             }.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
-            val editor = htmleditor {
+            editor = htmleditor {
                 prefHeight = 200.px.value
             }
-            editor.isVisible = false
+            editor?.isVisible = false
             Platform.runLater{
-                val nodes = editor.lookupAll(".tool-bar")
+                val nodes = editor?.lookupAll(".tool-bar") ?: emptySet()
                 for (node in nodes) {
                     node.isVisible = false
                     node.isManaged = false
                 }
-                editor.isVisible = true
+                editor?.isVisible = true
             }
-
-            editor.htmlText = "<html><head></head><body contenteditable=\"true\"><h1>Heading</h1><div><u>Text</u>, some text</div></body></html>"
         }
     }
 
+}
+
+var hexCode = "0123456789ABCDEF".toCharArray()
+
+fun printHexBinary(data: ByteArray):String {
+    val r = StringBuilder(data.size * 3)
+    for (b in data) {
+        r.append(hexCode[(b.toInt() shr 4) and 0xF])
+        r.append(hexCode[(b.toInt() and 0xF)])
+        r.append(" ")
+    }
+    return r.toString()
+}
+fun printHexBinary(data: List<Byte>):String {
+    val r = StringBuilder(data.size * 3)
+    for (b in data) {
+        r.append(hexCode[(b.toInt() shr 4) and 0xF])
+        r.append(hexCode[(b.toInt() and 0xF)])
+        r.append(" ")
+    }
+    return r.toString()
 }

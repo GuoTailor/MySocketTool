@@ -32,14 +32,6 @@ class MainView : View("Hello TornadoFX") {
                         println("Quitting!")
                     }
                 }
-                menu("Edit") {
-                    item("Copy", "Shortcut+C").action {
-                        println("Copying!")
-                    }
-                    item("Paste", "Shortcut+V").action {
-                        println("Pasting!${"3".compareTo("2")}")
-                    }
-                }
                 menu("New") {
                     item("新的tab", "Shortcut+N").action {
                         tabPane?.tabs("new")
@@ -94,7 +86,7 @@ class MainView : View("Hello TornadoFX") {
                     //anchorpane {
                     vgrow = Priority.ALWAYS
                     tabPane = tabpane {
-                        tabs("new")
+                        //tabs("new")
                         hgrow = Priority.ALWAYS
                     }
                     //}
