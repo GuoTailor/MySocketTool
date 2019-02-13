@@ -16,6 +16,7 @@
 <div id="editor">{
     "msgCode":12
 }</div>
+<button onclick="test3()">nmka</button>
 <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script src="src/theme-eclipse.js" type="text/javascript" charset="utf-8"></script>
@@ -26,7 +27,14 @@
     editor.setTheme("ace/theme/eclipse");
     var JavaScriptMode = ace.require("ace/mode/json").Mode;
     editor.session.setMode(new JavaScriptMode());
-
+    editor.commands.addCommand({
+        name: "customSave",
+        bindKey: {win: "Ctrl-Alt-l"},
+        exec: function (editor) {
+            editor.setValue(JSON.stringify(JSON.parse(editor.getValue()), null, "\t"))
+        }
+    });
+    app.loadBody();
 
     function test() {
         console.log(editor.getValue());
@@ -36,6 +44,14 @@
     function test1(text) {
         editor.find("\"msgCode\":[ ]*\\d*", {regExp: true});
         editor.replace(text);
+    }
+
+    function test2(text) {
+        editor.setValue(text)
+    }
+
+    function test3() {
+        test2("{\n    \"code\": 1\n}")
     }
 </script>
 </body>

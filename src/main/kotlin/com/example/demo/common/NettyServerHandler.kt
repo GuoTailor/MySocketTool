@@ -55,5 +55,9 @@ class NettyServerHandler : ChannelInboundHandlerAdapter() {
         ctx?.channel()?.writeAndFlush(NettyServletResponse(data, heads))
     }
 
+    fun close() {
+        ctx?.close()
+    }
+
 }
 

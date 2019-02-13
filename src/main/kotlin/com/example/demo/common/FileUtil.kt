@@ -23,7 +23,7 @@ fun saverRequestToFile(data: Request, path: String, name: File? = null): File {
         file = name
     }
     if (!file.exists()) {
-        file.parentFile.mkdirs()
+        println(file.parentFile.mkdirs())
     }
     mapper.writeValue(file, data.serialize())
     return file
